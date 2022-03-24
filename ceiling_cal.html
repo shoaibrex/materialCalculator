@@ -1,0 +1,294 @@
+<html>
+  <head>
+    <title>Ceiling Estimator</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+      td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+      tr:nth-child(even) {
+        background-color: #dddddd;
+      }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript"> 
+      jQuery(document).ready(function(){
+        sheet = 0;
+        angle = 0;
+        t12 = 0;
+        t2 = 0;
+      	$(".cal").click(function(){
+          console.log("here")
+          if($("#length").val() == '' && $("#width").val() == ''){
+            alert("Enter Length and Width First");
+          }
+          else{
+            w=parseFloat($("#width").val());
+            l=parseFloat($("#length").val());
+            sheet = Math.ceil((l*w)/4);
+            angle = Math.ceil((l*2+w*2)/10);
+            $(".tile").text(sheet);
+            $(".l10").text(angle);
+
+            /*T 12 cal part*/
+            if (l == 12) {
+              if (w%2 == 0) {
+                t12 = w/2 -1;
+                t2 = t12 * 5 + 5;
+              }
+              else{
+                temp = (w/2).toFixed(2); 
+                t12 = temp.toString().split(".")[0];
+                t2 = t12 * 5;
+                if (parseInt(temp.toString().split(".")[1]) <= 50) {
+                  t2 = t2 + 3;
+                }
+                else{
+                  t2 = t2 + 5;
+                }
+
+              }
+            }
+            if (l/12 > 1){
+              temp = (l/12).toFixed(2);
+              tempLength = parseInt(temp.toString().split(".")[0]);
+              tempDepth = parseInt(temp.toString().split(".")[1]);
+              if (w%2 == 0) {
+                t12 = tempLength*(w/2 -1); /*calculating upper t12 level with even width*/
+                if (tempDepth <= 50 && tempDepth > 0) {
+                  t12 = t12 + Math.floor((w/2 -1)/2);
+                }
+                else if(tempDepth > 50){
+                  t12 = t12 + (w/2 -1);
+                }
+                else{/*do nothing*/}
+                if(l%2 == 0){
+                  t2 = (w/2 -1) * (l/2 -1) + (l/2 -1);
+                }else{
+                  t2 = (w/2 -1) * Math.floor(l/2) + Math.floor(l/2); 
+                }
+              }
+              else{
+                t12 = tempLength*Math.floor(w/2); /*calculating upper t12 level with other than even width*/
+                if (tempDepth <= 50 && tempDepth > 0) {
+                  t12 = t12 + Math.floor((w/2)/2);
+                }
+                else if(tempDepth > 50){
+                  t12 = t12 + Math.floor(w/2);
+                }
+                else{/*do nothing here*/}
+                tempWidth = (w/2).toFixed(2); 
+                if(l%2 == 0){
+                  t2 = Math.floor(w/2) * (l/2 -1) + (l/2 -1)/2;
+                }else{
+                  t2 = Math.floor(w/2) * Math.floor(l/2) + Math.floor((l/2)/2); 
+                }
+              }
+
+            }
+            $(".t12").text(t12);
+            $(".t2").text(t2);
+            
+          }
+        });
+        /*wall panel cal part*/
+        $(".p-cal").click(function(){
+          wp =0;
+          g = 0;
+          wp16 = 0;
+          if($("#p-len").val() == '' && $("#p-wid").val() == ''){
+            alert("Enter Length and Width First");
+          }
+          else{
+            w=parseFloat($("#p-wid").val());
+            l=parseFloat($("#p-len").val());
+            h=parseFloat($("#p-hit").val());
+            if ($("#p-hit").val()!='') {
+              wp = Math.floor(((w*2+l*2)*parseInt($("#p-hit").val()))/7.9);
+              wp16 = Math.floor(wp/1.5);
+              g = Math.floor( ((w*8+(h*4))/9.5)+((l*8+(h*4))/9.5) );  
+            }
+            else{
+              wp = Math.floor(((w*2+l*2)*12)/10);
+              wp16 = Math.floor(wp/1.5);
+              g = Math.floor(((w*4+40)/9.5)+((l*4+40)/9.5)); 
+            }
+            if($("#p-d").val()!=''){
+              wp = wp-(2*parseInt($("#p-d").val()));
+              wp16 = Math.floor(wp/1.5);
+              g = g+(2*parseInt($("#p-d").val()));
+            }
+            if($("#p-w").val()!=''){
+              wp = wp-(3*parseInt($("#p-w").val()));
+              wp16 = Math.floor(wp/1.5);
+              g = g+(3*parseInt($("#p-w").val()));
+            }
+            $(".w-p").text(wp);
+            $(".16-w-p").text(wp16);
+            $(".gola").text(g);
+            if(wp < 40){
+              $(".nail").text("1/2");
+            }
+            if(wp > 40){
+              $(".nail").text("1");
+            }
+            $(".clamp").text(Math.ceil(wp*4/100));
+
+          }
+        });
+
+        /*clear func*/
+        $(".p-cl").click(function(){
+          $("#p-len").val("");
+          $("#p-wid").val("");
+          $("#p-hit").val("");
+          $("#p-d").val("");
+          $("#p-w").val("");
+          $(".cal").trigger( "click" );
+        });
+        $(".c-cl").click(function(){
+          $("#length").val("");
+          $("#width").val("");
+          $(".p-cal").trigger( "click" );
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div class="jumbotron">
+      <div class="container text-center">
+        <h1>Modern Enterprises</h1>      
+        <p>Designed by Shoaib Ali</p>
+      </div>
+    </div>
+    <div class="container-fluid bg-3 text-center">
+  	 <h2 class="centre">Ceiling Estimate Calculator</h2>
+      <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-2">
+          <div class="input-group form-group">
+            <span class="input-group-addon">Length</span>
+            <input id="length" type="number" class="form-control" name="length" placeholder="Add Length">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="input-group form-group">
+            <span class="input-group-addon">Width</span>
+            <input id="width" type="number" class="form-control" name="width" placeholder="Add Width">
+          </div>   
+        </div>
+        <div class="col-md-2">
+          <a class="btn btn-primary btn-md cal">Calculate Now</a>
+          <a class="btn btn-danger btn-md c-cl">Clear Data</a>
+        </div>
+        <div class="col-md-3"></div>
+      </div>
+      <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+          <table>
+            <tr>
+              <th>Tiles 2x2</th>
+              <th>T 12'</th>
+              <th>T 2'</th>
+              <th>L 10'</th>
+            </tr>
+            <tr>
+              <td class="tile">0</td>
+              <td class="t12">0</td>
+              <td class="t2">0</td>
+              <td class="l10">0</td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-md-4"></div>
+      </div>
+
+
+      <!-- wall paneling section  -->
+      <h2 class="centre">Wall Paneling Estimate Calculator</h2>
+      <div class="row">
+        <div class="col-md-2">
+          <div class="input-group form-group">
+            <span class="input-group-addon">Length</span>
+            <input id="p-len" type="number" class="form-control" name="length" placeholder="Add Length">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="input-group form-group">
+            <span class="input-group-addon">Width</span>
+            <input id="p-wid" type="number" class="form-control" name="width" placeholder="Add Width">
+          </div>   
+        </div>
+        <div class="col-md-2">
+          <div class="input-group form-group">
+            <span class="input-group-addon">Height</span>
+            <input id="p-hit" type="number" class="form-control" name="width" placeholder="Add Height">
+          </div>   
+        </div>
+        <div class="col-md-2">
+          <div class="input-group form-group">
+            <span class="input-group-addon">Doors</span>
+            <input id="p-d" type="number" class="form-control" name="width" placeholder="Add Total Doors">
+          </div>   
+        </div>
+        <div class="col-md-2">
+          <div class="input-group form-group">
+            <span class="input-group-addon">Windows</span>
+            <input id="p-w" type="number" class="form-control" name="width" placeholder="Add Total Windows">
+          </div>
+        </div>
+        <div col-md-2>
+          <a class="btn btn-primary btn-md p-cal">Calculate Now</a>
+          <a class="btn btn-danger btn-md p-cl">Clear Data</a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+          <table>
+            <tr>
+              <th>Items</th>
+              <th>Quantity</th>
+            </tr>
+            <tr>
+              <td class="wp"> 10" Wall Panel</td>
+              <td class="w-p">0</td>
+            </tr>
+            <tr>
+              <td class="wp"> 16" Wall Panel</td>
+              <td class="16-w-p">0</td>
+            </tr>
+            <tr>
+              <td class="wp">Gola</td>
+              <td class="gola">0</td>
+            </tr>
+            <tr>
+              <td class="wp">Nails 3/4"</td>
+              <td class="nail">0</td>
+            </tr>
+            <!-- <tr>
+              <td class="wp">Elfy</td>
+              <td class="elfy">0</td>
+            </tr> -->
+            <tr>
+              <td class="wp">Clamps</td>
+              <td class="clamp">0</td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-md-4"></div>
+      </div>
+    </div>
+  </body>
+</html>
